@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <ProjectReference Include="..\..\src\Mailsink.Core\Mailsink.Core.csproj" />
+    <ProjectReference Include="..\..\src\Mailsink.Storage.InMemory\Mailsink.Storage.InMemory.csproj" />
+    <ProjectReference Include="..\..\src\Mailsink.Storage.Sqlite\Mailsink.Storage.Sqlite.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,43 @@
+# Mailsink with Docker Compose.
+#
+#   docker compose up -d
+#
+# Web UI: http://localhost:8025. Point your app's SMTP settings at localhost:1025,
+# or at mailsink:1025 from another container on this compose network.
+
+services:
+  mailsink:
+    image: ghcr.io/<owner>/mailsink:latest
+    restart: unless-stopped
+    ports:
+      - "8025:8025"   # Web UI and REST API
+      - "1025:1025"   # SMTP capture (no auth) - point your app here
+      - "1587:1587"   # SMTP submission (auth, STARTTLS)
+      - "1143:1143"   # IMAP
+      - "1993:1993"   # IMAPS
+      # - "1110:1110" # POP3, also set MAILSINK__Pop3__Enabled=true
+    environment:
+      MAILSINK__DefaultDomain: test.local
+      # Put the service name in the self-signed certificate so STARTTLS/IMAPS
+      # clients on the compose network can validate "mailsink".
+      MAILSINK__Tls__Hostnames__0: mailsink
+      MAILSINK__Retention__MaxMessages: "1000"
+      # Only accept the users listed here (default AcceptAny takes any login):
+      # MAILSINK__Auth__Mode: Registry
+      # MAILSINK__Auth__Users__0__Address: bob@test.local
+      # MAILSINK__Auth__Users__0__Password: secret
+    volumes:
+      - mailsink-data:/data
+
+  # Example application that sends mail through Mailsink. Replace with your own service.
+  # app:
+  #   image: my-app:latest
+  #   environment:
+  #     SMTP_HOST: mailsink
+  #     SMTP_PORT: "1025"
+  #   depends_on:
+  #     mailsink:
+  #       condition: service_healthy   # uses the image's built-in HEALTHCHECK
+
+volumes:
+  mailsink-data:

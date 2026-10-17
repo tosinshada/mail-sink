@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Testcontainers.Mailsink</PackageId>
+    <Description>Testcontainers module for the Mailsink Docker image.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Testcontainers" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,25 @@
+# Build output and local state
+**/bin/
+**/obj/
+**/TestResults/
+**/*.binlog
+**/*.user
+**/*.tsbuildinfo
+data/
+.vs/
+.idea/
+
+# Rebuilt inside the image by the Node stage
+src/Mailsink.Web/node_modules/
+src/Mailsink.Web/dist/
+src/Mailsink.Server/wwwroot/
+
+# Not needed to build the server image
+.git/
+.github/
+.claude/
+.agents/
+docs/
+tests/
+docker/
+*.md

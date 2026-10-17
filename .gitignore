@@ -1,0 +1,14 @@
+bin/
+obj/
+*.user
+.vs/
+.idea/
+data/
+node_modules/
+src/Mailsink.Web/dist/
+src/Mailsink.Server/wwwroot/
+TestResults/
+*.binlog
+
+# TypeScript incremental build state
+*.tsbuildinfo

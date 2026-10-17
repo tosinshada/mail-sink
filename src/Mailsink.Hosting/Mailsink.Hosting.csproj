@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Mailsink.Core\Mailsink.Core.csproj" />
+    <ProjectReference Include="..\Mailsink.Storage.InMemory\Mailsink.Storage.InMemory.csproj" />
+    <ProjectReference Include="..\Mailsink.Storage.Sqlite\Mailsink.Storage.Sqlite.csproj" />
+    <ProjectReference Include="..\Mailsink.Smtp\Mailsink.Smtp.csproj" />
+    <ProjectReference Include="..\Mailsink.Imap\Mailsink.Imap.csproj" />
+    <ProjectReference Include="..\Mailsink.Pop3\Mailsink.Pop3.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+</Project>

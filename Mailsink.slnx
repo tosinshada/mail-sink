@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Mailsink.Api/Mailsink.Api.csproj" />
+    <Project Path="src/Mailsink.Core/Mailsink.Core.csproj" />
+    <Project Path="src/Mailsink.Hosting/Mailsink.Hosting.csproj" />
+    <Project Path="src/Mailsink.Imap/Mailsink.Imap.csproj" />
+    <Project Path="src/Mailsink.Pop3/Mailsink.Pop3.csproj" />
+    <Project Path="src/Mailsink.Server/Mailsink.Server.csproj" />
+    <Project Path="src/Mailsink.Smtp/Mailsink.Smtp.csproj" />
+    <Project Path="src/Mailsink.Storage.InMemory/Mailsink.Storage.InMemory.csproj" />
+    <Project Path="src/Mailsink.Storage.Sqlite/Mailsink.Storage.Sqlite.csproj" />
+    <Project Path="src/Mailsink.Testing.Xunit/Mailsink.Testing.Xunit.csproj" />
+    <Project Path="src/Mailsink.Testing/Mailsink.Testing.csproj" />
+    <Project Path="src/Testcontainers.Mailsink/Testcontainers.Mailsink.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Mailsink.Core.Tests/Mailsink.Core.Tests.csproj" />
+    <Project Path="tests/Mailsink.Imap.Tests/Mailsink.Imap.Tests.csproj" />
+    <Project Path="tests/Mailsink.Integration.Tests/Mailsink.Integration.Tests.csproj" />
+  </Folder>
+</Solution>

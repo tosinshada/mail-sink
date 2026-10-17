@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Mailsink.Core\Mailsink.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Mailsink.Smtp.Tests" />
+    <InternalsVisibleTo Include="Mailsink.Integration.Tests" />
+  </ItemGroup>
+</Project>

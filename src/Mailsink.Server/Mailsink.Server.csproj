@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <AssemblyName>mailsink</AssemblyName>
+    <RootNamespace>Mailsink.Server</RootNamespace>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>mailsink</ToolCommandName>
+    <PackageId>mailsink</PackageId>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mailsink.Api\Mailsink.Api.csproj" />
+  </ItemGroup>
+  <!-- Build the SPA into wwwroot when node is available: dotnet build -p:BuildWeb=true -->
+  <Target Name="BuildWebUi" BeforeTargets="Build" Condition="'$(BuildWeb)' == 'true'">
+    <Exec Command="npm ci" WorkingDirectory="..\Mailsink.Web" Condition="!Exists('..\Mailsink.Web\node_modules')" />
+    <Exec Command="npm run build" WorkingDirectory="..\Mailsink.Web" />
+  </Target>
+</Project>

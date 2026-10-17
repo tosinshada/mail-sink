@@ -1,0 +1,15 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "mailsink",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": [
+        "run", "--project", "src/Mailsink.Server", "--no-launch-profile", "--",
+        "--storage", "InMemory", "--http", "http://127.0.0.1:8026",
+        "--smtp-port", "2025", "--submission-port", "2587", "--imap-port", "2143", "--imaps-port", "2993"
+      ],
+      "port": 8026
+    }
+  ]
+}

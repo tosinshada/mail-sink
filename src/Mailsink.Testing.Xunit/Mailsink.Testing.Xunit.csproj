@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Mailsink.Testing.Xunit</PackageId>
+    <Description>xUnit v3 fixtures for Mailsink.Testing.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mailsink.Testing\Mailsink.Testing.csproj" />
+    <PackageReference Include="xunit.v3.extensibility.core" />
+  </ItemGroup>
+</Project>

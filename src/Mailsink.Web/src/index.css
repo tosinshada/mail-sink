@@ -1,0 +1,148 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Design tokens (docs/TECHNICAL_DESIGN.md §11.5). Dark is the default theme. */
+:root,
+:root[data-theme="dark"] {
+  --bg: #000000;
+  --bg-subtle: #0a0a0a;
+  --surface: #111111;
+  --surface-hover: #1a1a1a;
+  --surface-active: #222222;
+  --border: #222222;
+  --border-strong: #333333;
+  --text: #ededed;
+  --text-muted: #a1a1a1;
+  --primary-bg: #ffffff;
+  --primary-fg: #000000;
+  --accent: #3ecf8e;
+  --accent-soft: #0f2a1e;
+  --accent-border: #1d5a3f;
+  --danger: #ff5c5c;
+  --danger-soft: #2a1010;
+  --warning: #f5a524;
+  --info: #52a8ff;
+  --frame-bg: #ffffff;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --bg-subtle: #fafafa;
+  --surface: #f4f4f5;
+  --surface-hover: #ececee;
+  --surface-active: #e4e4e7;
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+  --text: #09090b;
+  --text-muted: #52525b;
+  --primary-bg: #09090b;
+  --primary-fg: #ffffff;
+  --accent: #15803d;
+  --accent-soft: #e7f6ee;
+  --accent-border: #a7dcc0;
+  --danger: #dc2626;
+  --danger-soft: #fdeaea;
+  --warning: #b45309;
+  --info: #1d4ed8;
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-subtle: var(--bg-subtle);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-active: var(--surface-active);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-fg: var(--text);
+  --color-muted: var(--text-muted);
+  --color-primary: var(--primary-bg);
+  --color-primary-fg: var(--primary-fg);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-border: var(--accent-border);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --font-sans: "Inter", "Segoe UI Variable", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Code", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--info);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--info) 35%, transparent);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 999px;
+    border: 2px solid var(--bg);
+  }
+}
+
+@layer components {
+  .link-dotted {
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: var(--text-muted);
+    text-underline-offset: 4px;
+  }
+
+  .link-dotted:hover {
+    text-decoration-color: var(--text);
+  }
+
+  .row-new {
+    animation: row-new 1.6s ease-out;
+  }
+}
+
+@keyframes row-new {
+  from {
+    background: color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+  to {
+    background: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row-new {
+    animation: none;
+  }
+}
