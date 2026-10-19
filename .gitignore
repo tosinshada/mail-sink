@@ -12,3 +12,5 @@ TestResults/
 
 # TypeScript incremental build state
 *.tsbuildinfo
+
+film/

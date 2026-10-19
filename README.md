@@ -24,6 +24,16 @@
 
 <br>
 
+<p align="center">
+  <a href="docs/media/mailsink-launch.mp4">
+    <img alt="Mailsink launch film: switch your SMTP and IMAP to Mailsink, capture every outgoing and incoming email, and capture SMS locally" src="docs/media/mailsink-launch-poster.jpg" width="880">
+  </a>
+  <br>
+  <sub>▶ <a href="docs/media/mailsink-launch.mp4"><b>Watch the launch film</b></a> (68 s): switch your SMTP and IMAP to Mailsink, capture every outgoing and incoming email, and capture SMS locally.</sub>
+</p>
+
+<br>
+
 <table>
   <tr>
     <td width="25%" valign="top">
