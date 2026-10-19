@@ -176,11 +176,12 @@ public sealed class MailsinkServer : IAsyncDisposable
         return await LoadAsync(result.Message, ct);
     }
 
-    /// <summary>Purges messages, mailboxes and transcripts, resets chaos rules, and re-creates users added with <see cref="WithUser"/>.</summary>
+    /// <summary>Purges messages, mailboxes, SMS and transcripts, resets chaos rules, and re-creates users added with <see cref="WithUser"/>.</summary>
     public async Task ResetAsync(CancellationToken ct = default)
     {
         await Store.PurgeAsync(ct);
         Services.GetRequiredService<TranscriptStore>().Clear();
+        Services.GetRequiredService<Mailsink.Core.Sms.SmsService>().DeleteAll();
         Chaos.Update(new ChaosSettings(true, []));
         var accounts = Services.GetRequiredService<IAccountService>();
         await accounts.SeedAsync(ct);

@@ -32,7 +32,7 @@ public static class MailsinkApiExtensions
         services.AddOpenApi("v1", o => o.AddDocumentTransformer((document, _, _) =>
         {
             document.Info.Title = "Mailsink API";
-            document.Info.Description = "Capture, inspect and send test email. Real-time events: SignalR hub at /hubs/mail.";
+            document.Info.Description = "Capture, inspect and send test email and SMS. Real-time events: SignalR hub at /hubs/mail.";
             document.Info.Version = AdminEndpoints.Version;
             return Task.CompletedTask;
         }));
@@ -82,6 +82,7 @@ public static class MailsinkApiExtensions
         SendEndpoints.Map(api);
         AccountEndpoints.Map(api);
         AdminEndpoints.Map(api);
+        SmsEndpoints.Map(api);
         app.MapFallback("/api/{**rest}", () => Results.NotFound(new ErrorResponse("No such API endpoint")));
 
         app.MapHub<MailHub>("/hubs/mail");

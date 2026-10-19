@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { PageHeader } from "@/components/layout";
 import { snippets } from "@/components/snippets";
-import { Badge, RelativeTime, Spinner } from "@/components/ui";
+import { Badge, RelativeTime, Spinner, Stat } from "@/components/ui";
 import { api } from "@/lib/api";
 import { cn, formatSize } from "@/lib/format";
 
@@ -89,16 +89,6 @@ export function MetricsPage() {
         </div>
       )}
     </>
-  );
-}
-
-function Stat({ label, value, hint }: { label: string; value: string; hint?: React.ReactNode }) {
-  return (
-    <div className="rounded-lg border border-border bg-bg-subtle p-4">
-      <div className="text-[12px] font-medium uppercase tracking-wide text-muted">{label}</div>
-      <div className="mt-1 text-[26px] font-semibold leading-tight tabular-nums">{value}</div>
-      {hint && <div className="mt-0.5 text-[12px] text-muted">{hint}</div>}
-    </div>
   );
 }
 

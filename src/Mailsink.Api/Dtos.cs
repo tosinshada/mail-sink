@@ -146,6 +146,26 @@ public sealed record MailboxChangedDto(string Owner, long? MailboxId);
 
 public sealed record WaitResponse(int Count, IReadOnlyList<MessageSummaryDto> Messages);
 
+public sealed record SmsSenderDto(string? Name, string? Number);
+
+public sealed record SmsSendRequest(string? Message, IReadOnlyList<string?>? To, SmsSenderDto? From = null);
+
+public sealed record SmsSendResponse(IReadOnlyList<string> Ids, IReadOnlyList<string> Recipients, SmsSenderDto From);
+
+public sealed record SmsMessageDto(string Id, string To, SmsSenderDto From, string Body, DateTimeOffset ReceivedAt, bool IsRead);
+
+public sealed record SmsPhoneDto(
+    string Number,
+    int Count,
+    int Unread,
+    int Senders,
+    string LastMessage,
+    string LastFromName,
+    DateTimeOffset FirstReceivedAt,
+    DateTimeOffset LastReceivedAt);
+
+public sealed record SmsStatsDto(int Phones, int Messages, int Unread, int Senders, int Last24Hours);
+
 public sealed record ErrorResponse(string Error);
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web, UseStringEnumConverter = true, DefaultIgnoreCondition = JsonIgnoreCondition.Never)]
@@ -179,6 +199,12 @@ public sealed record ErrorResponse(string Error);
 [JsonSerializable(typeof(MailboxChangedDto))]
 [JsonSerializable(typeof(WaitResponse))]
 [JsonSerializable(typeof(ErrorResponse))]
+[JsonSerializable(typeof(SmsSendRequest))]
+[JsonSerializable(typeof(SmsSendResponse))]
+[JsonSerializable(typeof(List<SmsMessageDto>))]
+[JsonSerializable(typeof(List<SmsPhoneDto>))]
+[JsonSerializable(typeof(SmsStatsDto))]
+[JsonSerializable(typeof(string))]
 [JsonSerializable(typeof(ChaosSettings))]
 [JsonSerializable(typeof(ChaosRule))]
 [JsonSerializable(typeof(List<SendTemplate>))]

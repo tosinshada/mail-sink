@@ -22,6 +22,7 @@ public sealed class MailsinkOptions
     public TlsOptions Tls { get; set; } = new();
     public RetentionOptions Retention { get; set; } = new();
     public DiagnosticsOptions Diagnostics { get; set; } = new();
+    public SmsOptions Sms { get; set; } = new();
 }
 
 public enum StorageKind { Sqlite, InMemory }
@@ -102,6 +103,13 @@ public sealed class TlsOptions
     public string? CertificatePassword { get; set; }
     public bool GenerateSelfSigned { get; set; } = true;
     public List<string> Hostnames { get; set; } = [];
+}
+
+/// <summary>Defaults for SMS sent without a sender. The number uses the 555-01xx range reserved for fiction.</summary>
+public sealed class SmsOptions
+{
+    public string DefaultSenderName { get; set; } = "Mailsink";
+    public string DefaultSenderNumber { get; set; } = "+15555550100";
 }
 
 public sealed class RetentionOptions

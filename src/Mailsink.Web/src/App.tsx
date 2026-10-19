@@ -9,6 +9,7 @@ import { LogsPage } from "./pages/logs";
 import { MailboxesPage } from "./pages/mailboxes";
 import { MetricsPage } from "./pages/metrics";
 import { SettingsPage } from "./pages/settings";
+import { SmsPage, SmsPhonePage } from "./pages/sms";
 import { TemplatesPage } from "./pages/templates";
 
 export function App() {
@@ -20,6 +21,8 @@ export function App() {
         <Route path="/emails/:id" element={<EmailDetailPage />} />
         <Route path="/mailboxes" element={<MailboxesPage />} />
         <Route path="/mailboxes/:folder" element={<MailboxesPage />} />
+        <Route path="/sms" element={<SmsPage />} />
+        <Route path="/sms/:number" element={<SmsPhonePage />} />
         <Route path="/compose" element={<ComposePage />} />
         <Route path="/accounts" element={<AccountsPage />} />
         <Route path="/templates" element={<TemplatesPage />} />

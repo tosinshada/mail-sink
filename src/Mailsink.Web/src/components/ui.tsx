@@ -337,3 +337,14 @@ export function Card({ children, className, title, actions }: { children: ReactN
 export function Kbd({ children }: { children: ReactNode }) {
   return <kbd className="inline-flex h-5 min-w-5 items-center justify-center rounded border border-border bg-surface px-1 font-mono text-[11px] text-muted">{children}</kbd>;
 }
+
+/** Metric tile: uppercase label, large tabular value, optional hint. */
+export function Stat({ label, value, hint }: { label: string; value: string; hint?: ReactNode }) {
+  return (
+    <div className="rounded-lg border border-border bg-bg-subtle p-4">
+      <div className="text-[12px] font-medium uppercase tracking-wide text-muted">{label}</div>
+      <div className="mt-1 text-[26px] font-semibold leading-tight tabular-nums">{value}</div>
+      {hint && <div className="mt-0.5 text-[12px] text-muted">{hint}</div>}
+    </div>
+  );
+}

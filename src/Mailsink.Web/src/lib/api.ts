@@ -228,6 +228,39 @@ export interface BulkSendRequest {
   withAttachments?: boolean;
 }
 
+export interface SmsSender {
+  name: string;
+  number: string;
+}
+
+export interface SmsMessage {
+  id: string;
+  to: string;
+  from: SmsSender;
+  body: string;
+  receivedAt: string;
+  isRead: boolean;
+}
+
+export interface SmsPhone {
+  number: string;
+  count: number;
+  unread: number;
+  senders: number;
+  lastMessage: string;
+  lastFromName: string;
+  firstReceivedAt: string;
+  lastReceivedAt: string;
+}
+
+export interface SmsStats {
+  phones: number;
+  messages: number;
+  unread: number;
+  senders: number;
+  last24Hours: number;
+}
+
 export class ApiError extends Error {
   constructor(
     public status: number,
@@ -316,6 +349,14 @@ export const api = {
   saveTemplate: (id: string | null, body: { name: string; subject: string | null; text: string | null; html: string | null; sampleData: string | null }) =>
     id ? request<Template>(`templates/${id}`, { method: "PUT", body: json(body) }) : request<Template>("templates", { method: "POST", body: json(body) }),
   deleteTemplate: (id: string) => request<void>(`templates/${id}`, { method: "DELETE" }),
+  smsStats: () => request<SmsStats>("sms/stats"),
+  smsPhones: () => request<SmsPhone[]>("sms/phones"),
+  smsThread: (number: string) => request<SmsMessage[]>(`sms/phones/${enc(number)}`),
+  sendSms: (body: { message: string; to: string[]; from?: { name?: string; number?: string } }) =>
+    request<{ ids: string[]; recipients: string[]; from: SmsSender }>("sms", { method: "POST", body: json(body) }),
+  markSmsRead: (number: string) => request<void>(`sms/phones/${enc(number)}/read`, { method: "POST" }),
+  deleteSmsPhone: (number: string) => request<void>(`sms/phones/${enc(number)}`, { method: "DELETE" }),
+  deleteAllSms: () => request<void>("sms", { method: "DELETE" }),
 };
 
 export const urls = {

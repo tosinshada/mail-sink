@@ -152,6 +152,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       void queryClient.invalidateQueries({ queryKey: ["message"] });
     });
     connection.on("Stats", (s: { total: number; unread: number }) => setStats(s));
+    connection.on("SmsReceived", () => void queryClient.invalidateQueries({ queryKey: ["sms"] }));
+    connection.on("SmsChanged", () => void queryClient.invalidateQueries({ queryKey: ["sms"] }));
     connection.on("AccountsChanged", () => void queryClient.invalidateQueries({ queryKey: ["accounts"] }));
     connection.on("MailboxChanged", (e: { owner: string }) => {
       void queryClient.invalidateQueries({ queryKey: ["mailboxes", e.owner] });

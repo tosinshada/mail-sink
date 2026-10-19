@@ -199,6 +199,52 @@ public sealed class ApiTests(HttpMailsinkFixture fixture) : IClassFixture<HttpMa
         Assert.Equal(["b@test.local"], detail.GetProperty("envelope").GetProperty("rcptTo").EnumerateArray().Select(e => e.GetString()));
     }
 
+    [Fact]
+    public async Task Sms_api_captures_one_thread_per_number()
+    {
+        using var response = await _http.PostAsJsonAsync("api/v1/sms", new
+        {
+            message = "Your code is 123456",
+            to = new[] { "+1 (555) 123-4567", "+15551234567", "07700 900123" },
+            from = new { name = "Acme", number = "+1 555 555 0199" },
+        }, Ct);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        var created = await response.Content.ReadFromJsonAsync<JsonElement>(Ct);
+        Assert.Equal(["+15551234567", "07700900123"], created.GetProperty("recipients").EnumerateArray().Select(e => e.GetString()));
+        Assert.Equal("+15555550199", created.GetProperty("from").GetProperty("number").GetString());
+
+        var phones = await GetJsonAsync("api/v1/sms/phones");
+        Assert.Equal(2, phones.GetArrayLength());
+
+        var thread = await GetJsonAsync("api/v1/sms/phones/%2B15551234567");
+        var message = Assert.Single(thread.EnumerateArray());
+        Assert.Equal("Your code is 123456", message.GetProperty("body").GetString());
+        Assert.Equal("Acme", message.GetProperty("from").GetProperty("name").GetString());
+
+        using var anonymous = await _http.PostAsJsonAsync("api/v1/sms", new { message = "no sender", to = new[] { "+15551234567" } }, Ct);
+        var defaults = (await anonymous.Content.ReadFromJsonAsync<JsonElement>(Ct)).GetProperty("from");
+        Assert.Equal(("Mailsink", "+15555550100"), (defaults.GetProperty("name").GetString(), defaults.GetProperty("number").GetString()));
+
+        var stats = await GetJsonAsync("api/v1/sms/stats");
+        Assert.Equal((2, 3, 2), (stats.GetProperty("phones").GetInt32(), stats.GetProperty("messages").GetInt32(), stats.GetProperty("senders").GetInt32()));
+
+        await _mail.ResetAsync(Ct);
+        Assert.Equal(0, (await GetJsonAsync("api/v1/sms/phones")).GetArrayLength());
+    }
+
+    [Fact]
+    public async Task Sms_api_rejects_the_whole_request_when_any_number_is_invalid()
+    {
+        using var response = await _http.PostAsJsonAsync("api/v1/sms", new { message = "hi", to = new[] { "+15551234567", "call me" } }, Ct);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var error = (await response.Content.ReadFromJsonAsync<JsonElement>(Ct)).GetProperty("error").GetString();
+        Assert.Contains("'call me'", error);
+
+        using var badSender = await _http.PostAsJsonAsync("api/v1/sms", new { message = "hi", to = new[] { "+15551234567" }, from = new { number = "x" } }, Ct);
+        Assert.Equal(HttpStatusCode.BadRequest, badSender.StatusCode);
+        Assert.Equal(0, (await GetJsonAsync("api/v1/sms/phones")).GetArrayLength());
+    }
+
     private async Task SmtpSendAsync(string subject, string from)
     {
         var message = new MimeMessage();

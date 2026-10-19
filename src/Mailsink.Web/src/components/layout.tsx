@@ -11,6 +11,7 @@ import {
   Keyboard,
   Mail,
   Menu as MenuIcon,
+  MessageSquare,
   Monitor,
   Moon,
   PenSquare,
@@ -31,6 +32,7 @@ import { Kbd, Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger, Tooltip }
 export const navigation = [
   { to: "/emails", label: "Emails", icon: Mail, shortcut: "g e" },
   { to: "/mailboxes", label: "Mailboxes", icon: Folder, shortcut: "g m" },
+  { to: "/sms", label: "SMS", icon: MessageSquare, shortcut: "g p" },
   { to: "/compose", label: "Compose", icon: PenSquare, shortcut: "c" },
   { to: "/accounts", label: "Accounts", icon: Users, shortcut: "g a" },
   { to: "/templates", label: "Templates", icon: FileText, shortcut: "g t" },
@@ -54,6 +56,7 @@ export function AppShell() {
     c: () => navigate("/compose"),
     "g e": () => navigate("/emails"),
     "g m": () => navigate("/mailboxes"),
+    "g p": () => navigate("/sms"),
     "g a": () => navigate("/accounts"),
     "g t": () => navigate("/templates"),
     "g c": () => navigate("/chaos"),

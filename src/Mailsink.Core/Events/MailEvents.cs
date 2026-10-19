@@ -23,6 +23,15 @@ public sealed record MailboxesChangedEvent(string Owner) : MailEvent;
 
 public sealed record AccountsChangedEvent : MailEvent;
 
+/// <summary>Text messages were captured (one per recipient).</summary>
+public sealed record SmsReceivedEvent(IReadOnlyList<Sms.SmsMessage> Messages) : MailEvent;
+
+/// <summary>A phone's messages were marked read.</summary>
+public sealed record SmsUpdatedEvent(string Number) : MailEvent;
+
+/// <summary>A phone's messages were deleted; <see cref="Number"/> is null when everything was cleared.</summary>
+public sealed record SmsDeletedEvent(string? Number) : MailEvent;
+
 /// <summary>In-process pub/sub for store changes. Every subscriber sees every event.</summary>
 public interface IMailEventBus
 {

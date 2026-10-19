@@ -13,6 +13,7 @@ using Mailsink.Core.Events;
 using Mailsink.Core.Networking;
 using Mailsink.Core.Options;
 using Mailsink.Core.Storage;
+using Mailsink.Core.Sms;
 using Mailsink.Core.Templates;
 using Mailsink.Imap;
 using Mailsink.Pop3;
@@ -81,6 +82,7 @@ public static class MailsinkServiceCollectionExtensions
         services.AddSingleton<EndpointRegistry>();
         services.AddSingleton<CertificateProvider>();
         services.AddSingleton<TemplateService>();
+        services.AddSingleton<SmsService>();
 
         // Order matters: the store is ready before any listener accepts connections.
         services.AddHostedService<StoreInitializer>();

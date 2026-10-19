@@ -7,7 +7,7 @@
 
 services:
   mailsink:
-    image: ghcr.io/<owner>/mailsink:latest
+    image: ghcr.io/tosinshada/mailsink:latest
     restart: unless-stopped
     ports:
       - "8025:8025"   # Web UI and REST API

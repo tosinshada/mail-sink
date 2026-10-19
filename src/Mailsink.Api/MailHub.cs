@@ -9,7 +9,7 @@ namespace Mailsink.Api;
 
 /// <summary>
 /// <c>/hubs/mail</c>. Server events: <c>MessageReceived</c>, <c>MessagesDeleted</c>, <c>MessageUpdated</c>, <c>Stats</c>,
-/// <c>AccountsChanged</c>, and <c>MailboxChanged</c> for accounts a client subscribed to.
+/// <c>AccountsChanged</c>, <c>SmsReceived</c>, <c>SmsChanged</c>, and <c>MailboxChanged</c> for accounts a client subscribed to.
 /// </summary>
 public sealed class MailHub(IAccountService accounts) : Hub
 {
@@ -68,6 +68,13 @@ internal sealed class HubEventForwarder(IMailEventBus bus, IMailStore store, IHu
                             break;
                         case AccountsChangedEvent:
                             await hub.Clients.All.SendAsync("AccountsChanged", stoppingToken);
+                            break;
+                        case SmsReceivedEvent sms:
+                            await hub.Clients.All.SendAsync("SmsReceived", sms.Messages.Select(Endpoints.SmsEndpoints.ToDto).ToList(), stoppingToken);
+                            break;
+                        case SmsUpdatedEvent:
+                        case SmsDeletedEvent:
+                            await hub.Clients.All.SendAsync("SmsChanged", stoppingToken);
                             break;
                     }
                 }

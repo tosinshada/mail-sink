@@ -80,6 +80,20 @@ Use it on your laptop while you build sign-up flows, in Docker Compose next to y
 
 <br>
 
+## SMS
+
+Mailsink also catches text messages. Point your app's SMS sender at one endpoint with a message and a list of phone numbers:
+
+```bash
+curl -X POST http://localhost:8025/api/v1/sms \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Your code is 482913", "to": ["+1 (555) 123-4567", "07700 900123"], "from": {"name": "Acme", "number": "+1 555 555 0199"}}'
+```
+
+`from` is optional, and so is each of its parts. A missing name or number falls back to `Mailsink:Sms:DefaultSenderName` (`Mailsink`) and `Mailsink:Sms:DefaultSenderNumber` (`+15555550100`).
+
+The **SMS** page lists every number that received a message, with counts, unread, senders and timings, plus totals across all phones. Click a number to see its mock iPhone, with the messages stacked as iMessage bubbles and updated live. Validation is loose on purpose: spaces, dashes, dots and parentheses are ignored, one leading `+` is allowed, and 7–15 digits are required. If any number is invalid, the whole request returns `400` and nothing is stored. `GET /api/v1/sms/phones`, `GET /api/v1/sms/phones/{number}` and `GET /api/v1/sms/stats` return what was captured so tests can assert on it.
+
 ## Built for tests
 
 `Mailsink.Testing` starts the full server inside your test process with in-memory storage and OS-assigned ports, so tests run in parallel without port clashes. Send, wait, assert.
