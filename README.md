@@ -24,12 +24,10 @@
 
 <br>
 
+https://github.com/user-attachments/assets/0e388d9f-aaf3-4d77-ade8-4752b268fb1e
+
 <p align="center">
-  <a href="docs/media/mailsink-launch.mp4">
-    <img alt="Mailsink launch film: switch your SMTP and IMAP to Mailsink, capture every outgoing and incoming email, and capture SMS locally" src="docs/media/mailsink-launch-poster.jpg" width="880">
-  </a>
-  <br>
-  <sub>▶ <a href="docs/media/mailsink-launch.mp4"><b>Watch the launch film</b></a> (68 s): switch your SMTP and IMAP to Mailsink, capture every outgoing and incoming email, and capture SMS locally.</sub>
+  <sub>Switch your SMTP and IMAP to Mailsink, capture every outgoing and incoming email, and capture SMS locally.</sub>
 </p>
 
 <br>
