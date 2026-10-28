@@ -28,8 +28,6 @@ interface AppState {
   freshIds: Set<string>;
   paletteOpen: boolean;
   setPaletteOpen: (open: boolean) => void;
-  shortcutsOpen: boolean;
-  setShortcutsOpen: (open: boolean) => void;
   notifications: boolean;
   setNotifications: (on: boolean) => void;
 }
@@ -68,7 +66,6 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [pendingNew, setPendingNew] = useState(0);
   const [freshIds, setFreshIds] = useState<Set<string>>(new Set());
   const [paletteOpen, setPaletteOpen] = useState(false);
-  const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [notifications, setNotificationsState] = useState(() => read("mailsink.notifications", "0") === "1");
   const nextToast = useRef(1);
   const accountRef = useRef(account);
@@ -214,12 +211,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       freshIds,
       paletteOpen,
       setPaletteOpen,
-      shortcutsOpen,
-      setShortcutsOpen,
       notifications,
       setNotifications,
     }),
-    [theme, setTheme, account, setAccount, toasts, toast, dismissToast, connected, stats, pendingNew, clearPendingNew, freshIds, paletteOpen, shortcutsOpen, notifications, setNotifications],
+    [theme, setTheme, account, setAccount, toasts, toast, dismissToast, connected, stats, pendingNew, clearPendingNew, freshIds, paletteOpen, notifications, setNotifications],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
@@ -231,33 +226,16 @@ export function useApp(): AppState {
   return context;
 }
 
-/** Global keyboard shortcuts. Ignored while typing in inputs. Supports two-key "g e" chords. */
+/** Global keyboard shortcuts ("mod+k" style combos). Plain-key bindings are ignored while typing in inputs. */
 export function useHotkeys(bindings: Record<string, (e: KeyboardEvent) => void>, deps: unknown[] = []) {
-  const pending = useRef<{ key: string; at: number } | null>(null);
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
+      if (e.altKey) return;
+      const mod = e.ctrlKey || e.metaKey;
       const target = e.target as HTMLElement | null;
       const typing = target && (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName));
-      const combo = `${e.ctrlKey || e.metaKey ? "mod+" : ""}${e.key.toLowerCase()}`;
-      if (typing && combo !== "mod+k" && e.key !== "Escape") return;
-      if (e.altKey) return;
-
-      if (pending.current && Date.now() - pending.current.at < 1200) {
-        const chord = `${pending.current.key} ${e.key.toLowerCase()}`;
-        pending.current = null;
-        if (bindings[chord]) {
-          e.preventDefault();
-          bindings[chord](e);
-          return;
-        }
-      }
-
-      if (Object.keys(bindings).some((k) => k.startsWith(`${e.key.toLowerCase()} `)) && !e.ctrlKey && !e.metaKey) {
-        pending.current = { key: e.key.toLowerCase(), at: Date.now() };
-        return;
-      }
-
-      const binding = bindings[combo] ?? bindings[e.key];
+      if (typing && !mod) return;
+      const binding = bindings[`${mod ? "mod+" : ""}${e.key.toLowerCase()}`];
       if (binding) {
         e.preventDefault();
         binding(e);

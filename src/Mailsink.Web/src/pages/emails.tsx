@@ -9,7 +9,7 @@ import { MessageCard, messageColumns, sourceLabel } from "@/components/message-c
 import { snippets } from "@/components/snippets";
 import { Button, Dialog, IconButton, Input, Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger, NativeSelect } from "@/components/ui";
 import { api, urls, type MessageSummary } from "@/lib/api";
-import { useApp, useHotkeys } from "@/lib/app-state";
+import { useApp } from "@/lib/app-state";
 
 type Filter = "all" | "unread" | "attachments" | `tag:${string}` | `source:${string}`;
 
@@ -60,7 +60,6 @@ export function EmailsPage() {
   };
   const selectedRows = (list.data?.messages ?? []).filter((m) => selected.has(m.id));
 
-  useHotkeys({ Escape: () => selected.size > 0 && setSelected(new Set()) }, [selected]);
 
   const columns = messageColumns<MessageSummary>((m) => m);
   const tags = list.data?.tags ?? [];
@@ -166,8 +165,6 @@ export function EmailsPage() {
         selected={selected}
         onSelectedChange={setSelected}
         rowClassName={(m) => (freshIds.has(m.id) ? "row-new" : undefined)}
-        onToggleRead={(m) => setRead.mutate({ ids: [m.id], read: !m.isRead })}
-        onDelete={(m) => deleteRows([m])}
         card={(m) => <MessageCard m={m} />}
         empty={
           state.query || filter !== "all" ? (
@@ -191,14 +188,14 @@ export function EmailsPage() {
               Download .eml
             </MenuItem>
             <MenuSeparator />
-            <MenuItem icon={m.isRead ? <Mail /> : <MailOpen />} shortcut="e" onSelect={() => setRead.mutate({ ids: [m.id], read: !m.isRead })}>
+            <MenuItem icon={m.isRead ? <Mail /> : <MailOpen />} onSelect={() => setRead.mutate({ ids: [m.id], read: !m.isRead })}>
               Mark {m.isRead ? "unread" : "read"}
             </MenuItem>
             <MenuItem icon={<Tag />} onSelect={() => setTagTarget([m])}>
               Tag…
             </MenuItem>
             <MenuSeparator />
-            <MenuItem icon={<Trash2 />} danger shortcut="#" onSelect={() => deleteRows([m])}>
+            <MenuItem icon={<Trash2 />} danger onSelect={() => deleteRows([m])}>
               Delete
             </MenuItem>
           </>

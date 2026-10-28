@@ -8,7 +8,7 @@ import { TagList, sourceLabel } from "@/components/message-columns";
 import { snippets } from "@/components/snippets";
 import { Badge, Button, CodeChip, IconButton, Input, Menu, MenuContent, MenuItem, MenuTrigger, RelativeTime, Spinner, Switch, Tabs, TabsContent, TabsList, TabsTrigger, Tooltip } from "@/components/ui";
 import { api, urls, type Address, type MessageDetail, type Transcript } from "@/lib/api";
-import { useApp, useHotkeys } from "@/lib/app-state";
+import { useApp } from "@/lib/app-state";
 import { absoluteTime, cn, formatAddress, formatSize, initials } from "@/lib/format";
 import { TagDialog } from "./emails";
 
@@ -40,16 +40,6 @@ export function EmailDetailPage() {
     if (detail.data && !detail.data.summary.isRead) setRead.mutate(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [detail.data?.summary.id]);
-
-  useHotkeys(
-    {
-      Backspace: () => navigate(-1),
-      "#": () => confirm("Delete this message?") && remove.mutate(),
-      e: () => detail.data && setRead.mutate(!detail.data.summary.isRead),
-      r: () => detail.data && reply(detail.data),
-    },
-    [detail.data],
-  );
 
   const reply = (d: MessageDetail) => {
     const s = d.summary;
@@ -133,13 +123,13 @@ export function EmailDetailPage() {
                 </IconButton>
               </MenuTrigger>
               <MenuContent>
-                <MenuItem icon={s.isRead ? <Mail /> : <MailOpen />} shortcut="e" onSelect={() => setRead.mutate(!s.isRead)}>
+                <MenuItem icon={s.isRead ? <Mail /> : <MailOpen />} onSelect={() => setRead.mutate(!s.isRead)}>
                   Mark {s.isRead ? "unread" : "read"}
                 </MenuItem>
                 <MenuItem icon={<Tag />} onSelect={() => setTagOpen(true)}>
                   Edit tags…
                 </MenuItem>
-                <MenuItem icon={<Trash2 />} danger shortcut="#" onSelect={() => confirm("Delete this message?") && remove.mutate()}>
+                <MenuItem icon={<Trash2 />} danger onSelect={() => confirm("Delete this message?") && remove.mutate()}>
                   Delete
                 </MenuItem>
               </MenuContent>

@@ -59,10 +59,9 @@ export function CommandPalette() {
             </Command.Group>
           )}
           <Command.Group heading="Go to">
-            {navigation.map(({ to, label, icon: Icon, shortcut }) => (
+            {navigation.map(({ to, label, icon: Icon }) => (
               <Item key={to} value={`go ${label}`} onSelect={() => run(() => navigate(to))}>
                 <Icon className="size-4" /> {label}
-                <span className="ml-auto font-mono text-[11px] text-muted">{shortcut}</span>
               </Item>
             ))}
           </Command.Group>

@@ -8,7 +8,6 @@ import {
   FileText,
   Flame,
   Folder,
-  Keyboard,
   Mail,
   Menu as MenuIcon,
   MessageSquare,
@@ -30,40 +29,26 @@ import { ApiSnippetButton, type Snippet } from "./snippets";
 import { Kbd, Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger, Tooltip } from "./ui";
 
 export const navigation = [
-  { to: "/emails", label: "Emails", icon: Mail, shortcut: "g e" },
-  { to: "/mailboxes", label: "Mailboxes", icon: Folder, shortcut: "g m" },
-  { to: "/sms", label: "SMS", icon: MessageSquare, shortcut: "g p" },
-  { to: "/compose", label: "Compose", icon: PenSquare, shortcut: "c" },
-  { to: "/accounts", label: "Accounts", icon: Users, shortcut: "g a" },
-  { to: "/templates", label: "Templates", icon: FileText, shortcut: "g t" },
-  { to: "/chaos", label: "Chaos", icon: Flame, shortcut: "g c" },
-  { to: "/logs", label: "Logs", icon: Activity, shortcut: "g l" },
-  { to: "/metrics", label: "Metrics", icon: BarChart3, shortcut: "g x" },
-  { to: "/settings", label: "Settings", icon: Settings, shortcut: "g s" },
+  { to: "/emails", label: "Emails", icon: Mail },
+  { to: "/mailboxes", label: "Mailboxes", icon: Folder },
+  { to: "/sms", label: "SMS", icon: MessageSquare },
+  { to: "/compose", label: "Compose", icon: PenSquare },
+  { to: "/accounts", label: "Accounts", icon: Users },
+  { to: "/templates", label: "Templates", icon: FileText },
+  { to: "/chaos", label: "Chaos", icon: Flame },
+  { to: "/logs", label: "Logs", icon: Activity },
+  { to: "/metrics", label: "Metrics", icon: BarChart3 },
+  { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
 export function AppShell() {
-  const navigate = useNavigate();
   const location = useLocation();
-  const { setPaletteOpen, setShortcutsOpen } = useApp();
+  const { setPaletteOpen } = useApp();
   const [drawer, setDrawer] = useState(false);
 
   useEffect(() => setDrawer(false), [location.pathname]);
 
-  useHotkeys({
-    "mod+k": () => setPaletteOpen(true),
-    "?": () => setShortcutsOpen(true),
-    c: () => navigate("/compose"),
-    "g e": () => navigate("/emails"),
-    "g m": () => navigate("/mailboxes"),
-    "g p": () => navigate("/sms"),
-    "g a": () => navigate("/accounts"),
-    "g t": () => navigate("/templates"),
-    "g c": () => navigate("/chaos"),
-    "g l": () => navigate("/logs"),
-    "g x": () => navigate("/metrics"),
-    "g s": () => navigate("/settings"),
-  });
+  useHotkeys({ "mod+k": () => setPaletteOpen(true) });
 
   return (
     <div className="flex h-full flex-col">
@@ -89,7 +74,6 @@ export function AppShell() {
       </div>
       <CommandBar />
       <CommandPalette />
-      <ShortcutSheet />
       <Toaster />
     </div>
   );
@@ -194,7 +178,7 @@ function AccountSwitcher() {
 }
 
 function SidebarFooter() {
-  const { theme, setTheme, setShortcutsOpen } = useApp();
+  const { theme, setTheme } = useApp();
   const next = theme === "dark" ? "light" : theme === "light" ? "system" : "dark";
   const ThemeIcon = theme === "dark" ? Moon : theme === "light" ? Sun : Monitor;
   return (
@@ -205,11 +189,6 @@ function SidebarFooter() {
         </button>
       </Tooltip>
       <div className="flex gap-1">
-        <Tooltip content="Keyboard shortcuts (?)">
-          <button aria-label="Keyboard shortcuts" onClick={() => setShortcutsOpen(true)} className="rounded-md p-2 text-muted hover:bg-surface-hover hover:text-fg">
-            <Keyboard className="size-[18px]" />
-          </button>
-        </Tooltip>
         <Tooltip content="API reference">
           <a aria-label="API reference" href={urls.docs()} target="_blank" rel="noreferrer" className="rounded-md p-2 text-muted hover:bg-surface-hover hover:text-fg">
             <CircleHelp className="size-[18px]" />
@@ -279,62 +258,6 @@ export function PageHeader({
         </div>
       </div>
     </header>
-  );
-}
-
-function ShortcutSheet() {
-  const { shortcutsOpen, setShortcutsOpen } = useApp();
-  const rows: [string[][], string][] = [
-    [[["Ctrl", "K"]], "Command palette"],
-    [[["/"]], "Focus search"],
-    [[["j"], ["k"]], "Next / previous row"],
-    [[["Enter"]], "Open row"],
-    [[["e"]], "Toggle read"],
-    [[["#"], ["Del"]], "Delete"],
-    [[["x"]], "Select row"],
-    [[["c"]], "Compose"],
-    [[["g", "e"], ["g", "m"], ["g", "l"]], "Go to Emails / Mailboxes / Logs"],
-    [[["g", "a"], ["g", "t"], ["g", "c"]], "Go to Accounts / Templates / Chaos"],
-    [[["?"]], "This sheet"],
-  ];
-  return (
-    <DialogShell open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} title="Keyboard shortcuts">
-      <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2.5 text-[14px]">
-        {rows.map(([alternatives, label]) => (
-          <div key={label} className="contents">
-            <dt className="flex flex-wrap items-center gap-1">
-              {alternatives.map((keys, i) => (
-                <span key={i} className="flex items-center gap-1">
-                  {i > 0 && <span className="px-0.5 text-muted">/</span>}
-                  {keys.map((k) => (
-                    <Kbd key={k}>{k}</Kbd>
-                  ))}
-                </span>
-              ))}
-            </dt>
-            <dd className="text-muted">{label}</dd>
-          </div>
-        ))}
-      </dl>
-    </DialogShell>
-  );
-}
-
-function DialogShell({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: ReactNode }) {
-  useHotkeys({ Escape: () => open && onClose() }, [open]);
-  if (!open) return null;
-  return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 p-4 pt-[12vh]" onClick={onClose}>
-      <div role="dialog" aria-label={title} className="w-full max-w-md rounded-lg border border-border bg-bg-subtle p-5 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-[16px] font-semibold">{title}</h2>
-          <button aria-label="Close" onClick={onClose} className="rounded-md p-1 text-muted hover:bg-surface-hover">
-            <X className="size-4" />
-          </button>
-        </div>
-        {children}
-      </div>
-    </div>
   );
 }
 

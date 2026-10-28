@@ -88,9 +88,9 @@ Snapshot taken 2026-10-17, mid-implementation. Work stopped while the web UI was
 Written but **not yet compiled or run**:
 - `package.json` with dependencies installed, `vite.config.ts` (build output to `Server/wwwroot`, dev proxy), `tsconfig.json`, `index.html`, favicon.
 - `src/index.css`: dark and light tokens from §11.5 and the Tailwind v4 theme.
-- `src/lib/api.ts` (typed client for every endpoint), `src/lib/format.ts`, `src/lib/app-state.tsx` (theme, account switcher, toasts, SignalR connection with query invalidation, new-message counter, unread count in the tab title, desktop notifications, the `useHotkeys` hook with `g x` chords).
+- `src/lib/api.ts` (typed client for every endpoint), `src/lib/format.ts`, `src/lib/app-state.tsx` (theme, account switcher, toasts, SignalR connection with query invalidation, new-message counter, unread count in the tab title, desktop notifications, the `useHotkeys` hook, used only for Ctrl+K).
 - `src/components/ui.tsx` (Button, IconButton, Input, Select, Tooltip, CodeChip, RelativeTime, Badge, Switch, Checkbox, Tabs, Dialog, Menu, Card, Kbd).
-- `src/components/layout.tsx` (AppShell, sidebar with account switcher, mobile drawer, page header, command bar showing port status, shortcut sheet, toaster).
+- `src/components/layout.tsx` (AppShell, sidebar with account switcher, mobile drawer, page header, command bar showing port status, toaster).
 - `src/components/snippets.tsx` (the `</>` API-snippet dialog and snippet builders).
 - `src/components/command-palette.tsx` (cmdk).
 

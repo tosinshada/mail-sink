@@ -297,7 +297,7 @@ export function MenuContent({ children, align = "end" }: { children: ReactNode; 
   );
 }
 
-export function MenuItem({ children, onSelect, danger, icon, shortcut, disabled }: { children: ReactNode; onSelect?: () => void; danger?: boolean; icon?: ReactNode; shortcut?: string; disabled?: boolean }) {
+export function MenuItem({ children, onSelect, danger, icon, disabled }: { children: ReactNode; onSelect?: () => void; danger?: boolean; icon?: ReactNode; disabled?: boolean }) {
   return (
     <DropdownPrimitive.Item
       disabled={disabled}
@@ -309,7 +309,6 @@ export function MenuItem({ children, onSelect, danger, icon, shortcut, disabled 
     >
       <span className="text-muted [&>svg]:size-4">{icon}</span>
       <span className="flex-1">{children}</span>
-      {shortcut && <kbd className="font-mono text-[11px] text-muted">{shortcut}</kbd>}
     </DropdownPrimitive.Item>
   );
 }

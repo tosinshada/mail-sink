@@ -305,8 +305,6 @@ export function MailboxesPage() {
             onOpen={(r) => navigate(`/emails/${r.message.id}`)}
             selected={new Set([...selected].map(String))}
             onSelectedChange={(s) => setSelected(new Set([...s].map(Number)))}
-            onToggleRead={(r) => flags.mutate(r.flags.includes("\\Seen") ? { uids: [r.uid], remove: ["\\Seen"] } : { uids: [r.uid], add: ["\\Seen"] })}
-            onDelete={(r) => (trash && current?.specialUse !== "Trash" ? move.mutate({ uids: [r.uid], target: trash.name }) : flags.mutate({ uids: [r.uid], add: ["\\Deleted"] }))}
             dragData={(r) => (selected.has(r.uid) ? [...selected].join(",") : String(r.uid))}
             rowClassName={(r) => (r.flags.includes("\\Deleted") ? "opacity-50" : undefined)}
             card={(r) => <MessageCard m={r.message} />}
@@ -318,7 +316,7 @@ export function MailboxesPage() {
               const flagged = r.flags.includes("\\Flagged");
               return (
                 <>
-                  <MenuItem icon={seen ? <Mail /> : <MailOpen />} shortcut="e" onSelect={() => flags.mutate(seen ? { uids: [r.uid], remove: ["\\Seen"] } : { uids: [r.uid], add: ["\\Seen"] })}>
+                  <MenuItem icon={seen ? <Mail /> : <MailOpen />} onSelect={() => flags.mutate(seen ? { uids: [r.uid], remove: ["\\Seen"] } : { uids: [r.uid], add: ["\\Seen"] })}>
                     Mark {seen ? "unseen" : "seen"}
                   </MenuItem>
                   <MenuItem icon={flagged ? <FlagOff /> : <Flag />} onSelect={() => flags.mutate(flagged ? { uids: [r.uid], remove: ["\\Flagged"] } : { uids: [r.uid], add: ["\\Flagged"] })}>
@@ -331,7 +329,7 @@ export function MailboxesPage() {
                     </MenuItem>
                   ))}
                   {otherFolders.length > 0 && <MenuSeparator />}
-                  <MenuItem icon={<Trash2 />} danger shortcut="#" onSelect={() => flags.mutate({ uids: [r.uid], add: ["\\Deleted"] })}>
+                  <MenuItem icon={<Trash2 />} danger onSelect={() => flags.mutate({ uids: [r.uid], add: ["\\Deleted"] })}>
                     Mark \Deleted
                   </MenuItem>
                 </>

@@ -1,9 +1,9 @@
 import { ArrowDown, ChevronDown, Inbox, MoreHorizontal, Search, X } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useApp, useHotkeys } from "@/lib/app-state";
+import { useApp } from "@/lib/app-state";
 import { cn, hue as hueOf } from "@/lib/format";
-import { Checkbox, Kbd, Menu, MenuContent, MenuTrigger, Spinner, Tooltip } from "./ui";
+import { Checkbox, Menu, MenuContent, MenuTrigger, Spinner, Tooltip } from "./ui";
 
 export interface Column<T> {
   key: string;
@@ -33,9 +33,6 @@ export interface DataTableProps<T> {
   selected?: Set<string>;
   onSelectedChange?: (selected: Set<string>) => void;
   rowClassName?: (row: T) => string | undefined;
-  /** Hotkey handlers applied to the focused row (j/k move the cursor). */
-  onToggleRead?: (row: T) => void;
-  onDelete?: (row: T) => void;
   /** Two-line card rendering used below the sm breakpoint. */
   card?: (row: T) => ReactNode;
   /** Native drag support: returns the payload to put in dataTransfer, or null to make the row non-draggable. */
@@ -43,7 +40,7 @@ export interface DataTableProps<T> {
   dense?: boolean;
 }
 
-/** The one table used by every list (design §11.1): hairline rows, hover checkboxes, ⋯ menus, keyboard cursor. */
+/** The one table used by every list (design §11.1): hairline rows, hover checkboxes, ⋯ menus. */
 export function DataTable<T>({
   rows,
   columns,
@@ -55,28 +52,12 @@ export function DataTable<T>({
   selected,
   onSelectedChange,
   rowClassName,
-  onToggleRead,
-  onDelete,
   card,
   dragData,
   dense,
 }: DataTableProps<T>) {
-  const [cursor, setCursor] = useState<number>(-1);
-  const bodyRef = useRef<HTMLTableSectionElement>(null);
   const selectable = !!onSelectedChange;
   const keys = rows.map(rowKey);
-
-  useEffect(() => {
-    if (cursor >= rows.length) setCursor(rows.length - 1);
-  }, [rows.length, cursor]);
-
-  useEffect(() => {
-    if (cursor < 0) return;
-    const el = bodyRef.current?.children[cursor] as HTMLElement | undefined;
-    el?.scrollIntoView({ block: "nearest" });
-  }, [cursor]);
-
-  const current = cursor >= 0 && cursor < rows.length ? rows[cursor] : undefined;
 
   const toggle = (key: string, on: boolean) => {
     if (!onSelectedChange) return;
@@ -85,19 +66,6 @@ export function DataTable<T>({
     else next.delete(key);
     onSelectedChange(next);
   };
-
-  useHotkeys(
-    {
-      j: () => setCursor((c) => Math.min(rows.length - 1, c + 1)),
-      k: () => setCursor((c) => Math.max(0, c - 1)),
-      Enter: () => current && onOpen?.(current),
-      x: () => current && selectable && toggle(rowKey(current), !selected?.has(rowKey(current))),
-      e: () => current && onToggleRead?.(current),
-      "#": () => current && onDelete?.(current),
-      Delete: () => current && onDelete?.(current),
-    },
-    [rows, cursor, selected, onOpen, onToggleRead, onDelete],
-  );
 
   const allSelected = selectable && rows.length > 0 && keys.every((k) => selected?.has(k));
   const someSelected = selectable && keys.some((k) => selected?.has(k));
@@ -136,11 +104,10 @@ export function DataTable<T>({
               {rowMenu && <th className="w-12 px-2 py-2.5" />}
             </tr>
           </thead>
-          <tbody ref={bodyRef}>
-            {rows.map((row, i) => {
+          <tbody>
+            {rows.map((row) => {
               const key = rowKey(row);
               const isSelected = selected?.has(key) ?? false;
-              const isCursor = i === cursor;
               const drag = dragData?.(row) ?? null;
               return (
                 <tr
@@ -151,15 +118,11 @@ export function DataTable<T>({
                     e.dataTransfer.setData("text/plain", drag);
                     e.dataTransfer.effectAllowed = "move";
                   }}
-                  onClick={() => {
-                    setCursor(i);
-                    onOpen?.(row);
-                  }}
-                  onMouseEnter={() => setCursor(i)}
+                  onClick={() => onOpen?.(row)}
                   className={cn(
                     "group border-t border-border transition-colors",
                     onOpen && "cursor-pointer",
-                    isSelected ? "bg-surface-active/60" : isCursor ? "bg-surface-hover" : "hover:bg-surface-hover",
+                    isSelected ? "bg-surface-active/60" : "hover:bg-surface-hover",
                     rowClassName?.(row),
                   )}
                 >
@@ -289,7 +252,7 @@ export function NewMessagesPill() {
   );
 }
 
-/** Search input with "/" focus and a clear button. Debounced through onChange. */
+/** Search input with a clear button. Debounced through onChange. */
 export function SearchInput({ value, onChange, placeholder, className, autoFocus }: { value: string; onChange: (v: string) => void; placeholder?: string; className?: string; autoFocus?: boolean }) {
   const ref = useRef<HTMLInputElement>(null);
   const [draft, setDraft] = useState(value);
@@ -300,7 +263,6 @@ export function SearchInput({ value, onChange, placeholder, className, autoFocus
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft]);
-  useHotkeys({ "/": () => ref.current?.focus() });
   return (
     <div className={cn("relative flex-1", className)}>
       <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" />
@@ -325,9 +287,7 @@ export function SearchInput({ value, onChange, placeholder, className, autoFocus
           <button aria-label="Clear search" onClick={() => (setDraft(""), onChange(""))} className="pointer-events-auto rounded p-0.5 text-muted hover:text-fg">
             <X className="size-4" />
           </button>
-        ) : (
-          <Kbd>/</Kbd>
-        )}
+        ) : null}
       </span>
     </div>
   );
@@ -355,7 +315,7 @@ export function Toolbar({ children, selection, className }: { children: ReactNod
     return (
       <div className={cn("mb-4 flex min-h-10 flex-wrap items-center gap-2 rounded-md border border-border-strong bg-surface px-3 py-1.5", className)}>
         <span className="text-[13.5px] font-medium">{selection.count} selected</span>
-        <Tooltip content="Clear selection (Esc)">
+        <Tooltip content="Clear selection">
           <button aria-label="Clear selection" onClick={selection.clear} className="rounded p-1 text-muted hover:text-fg">
             <X className="size-4" />
           </button>
