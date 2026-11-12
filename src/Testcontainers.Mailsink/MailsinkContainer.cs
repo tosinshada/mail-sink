@@ -11,7 +11,7 @@ namespace Testcontainers.Mailsink;
 /// <summary>Builds a Mailsink container: <c>new MailsinkBuilder().WithUser("bob@test.local", "pw").Build()</c>.</summary>
 public sealed class MailsinkBuilder : ContainerBuilder<MailsinkBuilder, MailsinkContainer, MailsinkConfiguration>
 {
-    public const string DefaultImage = "ghcr.io/mailsink/mailsink:latest";
+    public const string DefaultImage = "ghcr.io/tosinshada/mailsink:latest";
     public const ushort SmtpPort = 1025;
     public const ushort SubmissionPort = 1587;
     public const ushort ImapPort = 1143;

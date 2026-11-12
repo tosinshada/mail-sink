@@ -174,18 +174,51 @@ Use `.WithImage("...")` to pin a version or point at a locally built tag.
 ### Docker
 
 ```bash
-docker run --rm -p 8025:8025 -p 1025:1025 -p 1587:1587 -p 1143:1143 -p 1993:1993 -v mailsink-data:/data ghcr.io/<owner>/mailsink:latest
+docker run --rm -p 8025:8025 -p 1025:1025 -p 1587:1587 -p 1143:1143 -p 1993:1993 -v mailsink-data:/data ghcr.io/tosinshada/mailsink:latest
 ```
+
+`latest` moves with each release. Pin `ghcr.io/tosinshada/mailsink:0.2.1` (or a `sha-<commit>` tag) when you need the same image every time. Every tag is a multi-platform image for `linux/amd64` and `linux/arm64`, so the same tag works on x86 servers, Apple silicon and ARM CI runners.
 
 Open http://localhost:8025, point your app's SMTP settings at `localhost:1025`, and send something. Your mail is there.
 
 Prefer Compose? [`examples/docker-compose/compose.yaml`](examples/docker-compose/compose.yaml) runs Mailsink with a named volume, plus commented examples for seeded users and an app service that waits for Mailsink to be healthy.
 
-To build the image yourself:
+To build the image yourself for your own machine:
 
 ```bash
 docker build -f docker/Dockerfile -t mailsink .
 ```
+
+To build both platforms the way CI does (the .NET and web stages cross-compile on your machine's platform, so this doesn't need emulation):
+
+```bash
+docker buildx build -f docker/Dockerfile --platform linux/amd64,linux/arm64 -t mailsink .
+```
+
+#### How images are published
+
+The `docker` job in [`.github/workflows/ci.yml`](.github/workflows/ci.yml) builds `linux/amd64` and `linux/arm64` together with `docker buildx build` on every push to `main` and `develop`, but doesn't push those builds. Pushing a `v*` git tag runs the same build with `--push` to `ghcr.io/tosinshada/mailsink`, using these tags from `docker/metadata-action`:
+
+| Git tag `v1.2.3` publishes | Changes later? |
+| --- | --- |
+| `1.2.3` | No |
+| `sha-<short commit>`, e.g. `sha-b9df339` | No |
+| `1.2`, `1` | Yes, they follow the newest patch or minor release |
+| `latest` | Yes, the newest release. Prereleases such as `v1.3.0-rc.1` get only `1.3.0-rc.1` and `sha-…`. |
+
+The job's last step runs `docker buildx imagetools inspect ghcr.io/tosinshada/mailsink:sha-<short>` and fails the release unless both `linux/amd64` and `linux/arm64` are in the manifest list.
+
+To cut a release:
+
+```bash
+git tag v1.2.3
+```
+
+```bash
+git push origin v1.2.3
+```
+
+Base images in [`docker/Dockerfile`](docker/Dockerfile) are pinned by their multi-arch index digest. To bump one, run `docker buildx imagetools inspect <image:tag>` and copy the top-level `Digest:`, not a per-platform one. The GitHub Actions in the workflow are pinned to commit SHAs, with the release version in a trailing comment.
 
 ### From source
 
